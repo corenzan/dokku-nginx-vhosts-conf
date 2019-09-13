@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Halt on error and support tracing.
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+
+# Find and read configuration file.
+source "$(dirname $(realpath ${BASH_SOURCE[0]}))/../config"
+
+cat <<-EOF
+    $PLUGIN_COMMAND_PREFIX, Report about current nginx configuration.
+    $PLUGIN_COMMAND_PREFIX:install <package>, Back the current Nginx configuration up and replace with the contents from the package. Accepts either a path or URL to a ZIP file.
+    $PLUGIN_COMMAND_PREFIX:restore, Discard current configuration and restore last backup.
+    $PLUGIN_COMMAND_PREFIX:install-template <template>, Set a custom application configuration template. Accepts either a path or URL to the template file.
+    $PLUGIN_COMMAND_PREFIX:restore-template, Clear custom application configuration.
+EOF

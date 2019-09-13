@@ -1,0 +1,4 @@
+[plugin]
+description = "Dokku plugin for managing Nginx configuration"
+version = "0.0.0"
+[plugin.config]

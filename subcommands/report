@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# Halt on error and support tracing.
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+
+# Find and read configuration file.
+source "$(dirname $(realpath ${BASH_SOURCE[0]}))/../config"
+
+exit "$DOKKU_NOT_IMPLEMENTED_EXIT"
