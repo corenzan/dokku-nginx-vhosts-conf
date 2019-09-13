@@ -4,7 +4,8 @@
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
 # Find and read configuration file.
-source "$(dirname $(realpath ${BASH_SOURCE[0]}))/config"
+# shellcheck source=commands
+source "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/config"
 
 # Extract the command that was issued.
 COMMAND="${1#$PLUGIN_COMMAND_PREFIX:}"
@@ -12,7 +13,7 @@ shift 1
 
 # Subcommand switcher.
 case "$COMMAND" in
-    report|)
+    report|"")
         "$PLUGIN_BASE_PATH/subcommands/report"
         ;;
     install)
