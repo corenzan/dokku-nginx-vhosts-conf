@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-shellcheck config commands post-extract subcommands/*
+shellcheck config commands install post-extract subcommands/*
