@@ -39,6 +39,11 @@ Once it's installed use `nginx-conf:install repository-url` to install nginx con
     <p>🚧️ Restore original nginx config files.</p>
 </details>
 
+<details>
+    <summary><code>nginx-conf:update</code></summary>
+    <p>🚧️ Update currently installed config.</p>
+</details>
+
 ## Legal
 
 The MIT License © 2019 Arthur Corenzan

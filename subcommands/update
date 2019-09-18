@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Halt on error and support tracing.
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+
+exit "$DOKKU_NOT_IMPLEMENTED_EXIT"

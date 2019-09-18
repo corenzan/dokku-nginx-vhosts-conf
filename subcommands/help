@@ -9,6 +9,7 @@ help() {
 		    $PLUGIN_COMMAND_PREFIX:install <repository>, Save nginx config files and clone given repository in its place
 		    $PLUGIN_COMMAND_PREFIX:report, [NOT IMPLEMENTED] Report about current nginx config
 		    $PLUGIN_COMMAND_PREFIX:restore, [NOT IMPLEMENTED] Restore original nginx config files
+		    $PLUGIN_COMMAND_PREFIX:update, [NOT IMPLEMENTED] Update currently installed config
 	EOF
 }
 
