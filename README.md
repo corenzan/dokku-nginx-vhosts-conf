@@ -13,7 +13,7 @@
 sudo dokku plugin:install https://github.com/corenzan/dokku-nginx-vhosts-conf.git nginx-vhosts-conf
 ```
 
-**⚠️ Please not that it's important to choose a name the comes after `nginx-vhosts` otherwise this core plugin will cause conflict with your configuration.**
+**⚠️ You must pick a name that comes lexicographically after `nginx-vhosts`, otherwise the plugin won't be able to undo dokku edits to nginx configuration files.**
 
 ## Usage
 
