@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# Halt on error and support tracing.
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+
+# Figure out plugin name, because apparently that's an odd information for dokku to provide.
+PLUGIN_NAME="$(basename "$(dirname "$(realpath "${BASH_SOURCE[0]}")")")"
+export PLUGIN_NAME
+
+# Read configuration file.
+# shellcheck source=commands
+source "$PLUGIN_ENABLED_PATH/$PLUGIN_NAME/config"
+
+# Load dokku/common API.
+# shellcheck source=/dev/null
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+
+# Clean nginx config, i.e. undo any changes that were not commited.
+# We use the `install` hook but we really only need it when dokku updates.
+if [ -d "$NGINX_CONFIG_ROOT/.git" ]; then
+    dokku_log_info1 "Cleaning non commited changes to nginx config."
+    git -C "$NGINX_CONFIG_ROOT" reset --hard HEAD
+    git -C "$NGINX_CONFIG_ROOT" clean -fd
+    dokku_log_info1 "Done."
+fi
