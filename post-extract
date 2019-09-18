@@ -3,6 +3,10 @@
 # Halt on error and support tracing.
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
+# Load dokku/common API.
+# shellcheck source=/dev/null
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+
 # Figure out plugin name, because apparently that's an odd information for dokku to provide.
 PLUGIN_NAME="$(basename "$(dirname "$(realpath "${BASH_SOURCE[0]}")")")"
 export PLUGIN_NAME
