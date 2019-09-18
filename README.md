@@ -10,10 +10,10 @@
 ## Install
 
 ```shell
-sudo dokku plugin:install https://github.com/corenzan/dokku-nginx-vhosts-conf.git nginx-vhosts-conf
+sudo dokku plugin:install https://github.com/corenzan/dokku-nginx-vhosts-conf.git
 ```
 
-**⚠️ You must pick a name that comes lexicographically after `nginx-vhosts`, otherwise the plugin won't be able to undo dokku edits to nginx configuration files.**
+⚠️ If you use the `--name ...` flag you must pick a name that comes below `nginx-vhosts`, otherwise the plugin won't be able to undo dokku edits to nginx configuration files.
 
 ## Usage
 
