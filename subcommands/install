@@ -3,8 +3,61 @@
 # Halt on error and support tracing.
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
-# Find and read configuration file.
-# shellcheck source=commands
-source "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/config"
+# Load dokku/common API.
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
 
-exit "$DOKKU_NOT_IMPLEMENTED_EXIT"
+# Load dokku/nginx-vhosts API.
+source "$PLUGIN_CORE_AVAILABLE_PATH/nginx-vhosts/functions"
+
+# Validate arguments.
+if [ -z "$1" ]; then
+    dokku_log_warn "Missing argument! See 'dokku $PLUGIN_COMMAND_PREFIX:help' for details."
+    exit 1
+fi
+
+# Check if nginx config is already controlled by Git.
+if [ -d "$NGINX_CONFIG_PATH/.git" ]; then
+    dokku_log_info2 "'$NGINX_CONFIG_PATH' is already a git repository."
+    exit 1
+fi
+
+# Make sure the data directory exists.
+mkdir -p "$PLUGIN_DATA_PATH/"
+
+# Build archive path and file name.
+ARCHIVE="$PLUGIN_DATA_PATH/nginx-$(date +"%Y%m%d%H%M%S").tar.gz"
+
+# Save current config files.
+dokku_log_info2 "Archiving current nginx configuration files:"
+dokku_log_info1 "$ARCHIVE..."
+if tar -czf "$ARCHIVE" "$NGINX_CONFIG_PATH" >/dev/null 2>&1; then
+    dokku_log_info1 "Done."
+else
+    dokku_log_warn "Could not create archive."
+    exit 1
+fi
+
+TEMPORARY_PATH="/tmp/nginx"
+
+# Put new config into place.
+dokku_log_info2 "Cloning '$1' into place..."
+if git clone "$1" "$TEMPORARY_PATH" >/dev/null 2>&1; then
+    dokku_log_info1 "Done."
+else
+    dokku_log_warn "Could not clone repository."
+    exit 1
+fi
+
+# Once it was cloned successfully, move it to the right place.
+sudo rm -rf "$NGINX_CONFIG_PATH"
+sudo mv "$TEMPORARY_PATH" "$NGINX_CONFIG_PATH"
+
+dokku_log_info2 "Configuration files installed successfully."
+
+# Validate current config.
+dokku_log_info2 "Validating configuration..."
+if validate_nginx; then
+    dokku_log_info1 "Done."
+else
+    dokku_log_warn "Validation failed."
+fi
