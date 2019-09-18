@@ -4,9 +4,11 @@
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
 # Load dokku/common API.
+# shellcheck source=/dev/null
 source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
 
 # Load dokku/nginx-vhosts API.
+# shellcheck source=/dev/null
 source "$PLUGIN_CORE_AVAILABLE_PATH/nginx-vhosts/functions"
 
 # Validate arguments.

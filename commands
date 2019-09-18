@@ -11,8 +11,12 @@ export PLUGIN_NAME
 # shellcheck source=commands
 source "$PLUGIN_ENABLED_PATH/$PLUGIN_NAME/config"
 
+# Save command and shift positional arguments.
+COMMAND="$1"
+shift 1
+
 # Extract the subcommand that was issued.
-case "$1" in
+case "$COMMAND" in
     $PLUGIN_COMMAND_PREFIX)
         SUBCOMMAND="default"
         ;;
@@ -20,20 +24,19 @@ case "$1" in
         # Dokku has an alternate format for listing all commands and subcommands in one go.
         # But since the API doesn't tell us which format was requested we have to figure
         # it out from the command used to invoke dokku. i.e. Test if it had --all in it.
+        #
+        # shellcheck disable=SC2009
         if ps -o command= $PPID | grep '\--all' >/dev/null 2>&1; then
             SUBCOMMAND="help"
-            set -- "$1" "--no-usage"
+            set -- "--no-usage" "$*"
         else
             SUBCOMMAND="about"
         fi
         ;;
     *)
-        SUBCOMMAND="${1#$PLUGIN_COMMAND_PREFIX:}"
+        SUBCOMMAND="${COMMAND#$PLUGIN_COMMAND_PREFIX:}"
         ;;
 esac
-
-# Remove subcommand from parameters.
-shift 1
 
 # Find subcommand script and execute it.
 SUBCOMMAND_FILE="$PLUGIN_ENABLED_PATH/$PLUGIN_NAME/subcommands/$SUBCOMMAND"
