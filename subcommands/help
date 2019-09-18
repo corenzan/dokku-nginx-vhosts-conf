@@ -3,14 +3,22 @@
 # Halt on error and support tracing.
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
-# Find and read configuration file.
-# shellcheck source=commands
-source "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/config"
+help() {
+	cat <<-EOF
+		    $PLUGIN_COMMAND_PREFIX:help, Display usage details
+		    $PLUGIN_COMMAND_PREFIX:install <repository>, Save nginx config files and clone given repository in its place
+		    $PLUGIN_COMMAND_PREFIX:report, [NOT IMPLEMENTED] Report about current nginx config
+		    $PLUGIN_COMMAND_PREFIX:restore, [NOT IMPLEMENTED] Restore original nginx config files
+	EOF
+}
 
-cat <<-EOF
-    $PLUGIN_COMMAND_PREFIX, Report about current nginx configuration.
-    $PLUGIN_COMMAND_PREFIX:install <package>, Back the current Nginx configuration up and replace with the contents from the package. Accepts either a path or URL to a ZIP file.
-    $PLUGIN_COMMAND_PREFIX:restore, Discard current configuration and restore last backup.
-    $PLUGIN_COMMAND_PREFIX:install-template <template>, Set a custom application configuration template. Accepts either a path or URL to the template file.
-    $PLUGIN_COMMAND_PREFIX:restore-template, Clear custom application configuration.
-EOF
+if [ "$1" = "--no-usage" ]; then
+	help
+else
+	cat <<-EOF
+		Usage: dokku $PLUGIN_COMMAND_PREFIX:subcommand ...
+
+		Subcommands:
+	EOF
+	help | sort | column -c2 -t -s,
+fi

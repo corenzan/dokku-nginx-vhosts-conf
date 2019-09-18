@@ -3,5 +3,6 @@
 # Halt on error and support tracing.
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
-# Call default subcommand.
-"$PLUGIN_ENABLED_PATH/$PLUGIN_NAME/subcommands/help"
+cat <<-EOF
+	    $PLUGIN_COMMAND_PREFIX, Manages nginx config
+EOF

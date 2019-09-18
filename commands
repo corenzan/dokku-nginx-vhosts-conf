@@ -3,35 +3,42 @@
 # Halt on error and support tracing.
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
-# Find and read configuration file.
+# Figure out plugin name, because apparently that's an odd information for dokku to provide.
+PLUGIN_NAME="$(basename "$(dirname "$(realpath "${BASH_SOURCE[0]}")")")"
+export PLUGIN_NAME
+
+# Read configuration file.
 # shellcheck source=commands
-source "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/config"
+source "$PLUGIN_ENABLED_PATH/$PLUGIN_NAME/config"
 
-# Extract the command that was issued.
-COMMAND="${1#$PLUGIN_COMMAND_PREFIX:}"
-shift 1
-
-# Subcommand switcher.
-case "$COMMAND" in
-    report|"")
-        "$PLUGIN_BASE_PATH/subcommands/report"
-        ;;
-    install)
-        "$PLUGIN_BASE_PATH/subcommands/install" "$@"
-        ;;
-    restore)
-        "$PLUGIN_BASE_PATH/subcommands/restore"
-        ;;
-    install-template)
-        "$PLUGIN_BASE_PATH/subcommands/install-template" "$@"
-        ;;
-    restore-template)
-        "$PLUGIN_BASE_PATH/subcommands/restore-template"
+# Extract the subcommand that was issued.
+case "$1" in
+    $PLUGIN_COMMAND_PREFIX)
+        SUBCOMMAND="default"
         ;;
     help)
-        "$PLUGIN_BASE_PATH/subcommands/help"
+        # Dokku has an alternate format for listing all commands and subcommands in one go.
+        # But since the API doesn't tell us which format was requested we have to figure
+        # it out from the command used to invoke dokku. i.e. Test if it had --all in it.
+        if ps -o command= $PPID | grep '\--all' >/dev/null 2>&1; then
+            SUBCOMMAND="help"
+            set -- "$1" "--no-usage"
+        else
+            SUBCOMMAND="about"
+        fi
         ;;
     *)
-        exit "$DOKKU_NOT_IMPLEMENTED_EXIT"
+        SUBCOMMAND="${1#$PLUGIN_COMMAND_PREFIX:}"
         ;;
 esac
+
+# Remove subcommand from parameters.
+shift 1
+
+# Find subcommand script and execute it.
+SUBCOMMAND_FILE="$PLUGIN_ENABLED_PATH/$PLUGIN_NAME/subcommands/$SUBCOMMAND"
+if [ -x "$SUBCOMMAND_FILE" ]; then
+    "$SUBCOMMAND_FILE" "$@"
+else
+    exit "$DOKKU_NOT_IMPLEMENTED_EXIT"
+fi
