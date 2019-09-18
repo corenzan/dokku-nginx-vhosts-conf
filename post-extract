@@ -13,14 +13,14 @@ source "$PLUGIN_ENABLED_PATH/$PLUGIN_NAME/config"
 
 # APP="$1"
 TMP_WORK_DIR="$2"
-TEMPLATE_FILE="$NGINX_CONFIG_ROOT/nginx.conf.sigil"
+GLOBAL_TEMPLATE_FILE="$NGINX_CONFIG_ROOT/nginx.conf.sigil"
 
-if [ -f "$TEMPLATE_FILE" ]; then
-    # If the application aready has a template in its repository, bail.
-    if [ ! -f "$TMP_WORK_DIR/nginx.conf.sigil" ]; then
-        cp "$TEMPLATE_FILE" "$TMP_WORK_DIR/nginx.conf.sigil"
-        dokku_log_info1 "Custom nginx.conf.sigil deployed."
-    else
+# If the application aready has a template in its repository, bail.
+if [ -f "$GLOBAL_TEMPLATE_FILE" ]; then
+    if [ -f "$TMP_WORK_DIR/nginx.conf.sigil" ]; then
         dokku_log_info1 "nginx.conf.sigil already present in app."
+    else
+        cp "$GLOBAL_TEMPLATE_FILE" "$TMP_WORK_DIR/nginx.conf.sigil"
+        dokku_log_info1 "Custom nginx.conf.sigil deployed."
     fi
 fi
