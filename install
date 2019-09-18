@@ -15,6 +15,16 @@ source "$PLUGIN_ENABLED_PATH/$PLUGIN_NAME/config"
 # shellcheck source=/dev/null
 source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
 
+# Set permissions.
+SUDOERS_FILE="/etc/sudoers.d/dokku-nginx-conf"
+echo "%dokku ALL=(ALL) NOPASSWD:/bin/rm -rf $NGINX_CONFIG_ROOT,/bin/mv * $NGINX_CONFIG_ROOT" > "$SUDOERS_FILE"
+case "$DOKKU_DISTRO" in
+    centos|rhel)
+        echo "Defaults:dokku !requiretty" >> "$SUDOERS_FILE"
+        ;;
+esac
+chmod 0440 "$SUDOERS_FILE"
+
 # Clean nginx config, i.e. undo any changes that were not commited.
 # We use the `install` hook but we really only need it when dokku updates.
 if [ -d "$NGINX_CONFIG_ROOT/.git" ]; then
