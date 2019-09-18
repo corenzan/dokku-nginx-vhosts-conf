@@ -3,20 +3,24 @@
 # Halt on error and support tracing.
 set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
 
-# Find and read configuration file.
-# shellcheck source=commands
-source "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/config"
+# Figure out plugin name, because apparently that's an odd information for dokku to provide.
+PLUGIN_NAME="$(basename "$(dirname "$(realpath "${BASH_SOURCE[0]}")")")"
+export PLUGIN_NAME
+
+# Read configuration file.
+# shellcheck source=post-extract
+source "$PLUGIN_ENABLED_PATH/$PLUGIN_NAME/config"
 
 # APP="$1"
 TMP_WORK_DIR="$2"
-TEMPLATE_FILE="$PLUGIN_DATA_ROOT/nginx.conf.sigil"
+TEMPLATE_FILE="$NGINX_CONFIG_ROOT/nginx.conf.sigil"
 
-if [[ -f "$TEMPLATE_FILE" ]]; then
+if [ -f "$TEMPLATE_FILE" ]; then
     # If the application aready has a template in its repository, bail.
-    if [[ ! -f "$TMP_WORK_DIR/nginx.conf.sigil" ]]; then
+    if [ ! -f "$TMP_WORK_DIR/nginx.conf.sigil" ]; then
         cp "$TEMPLATE_FILE" "$TMP_WORK_DIR/nginx.conf.sigil"
-        dokku_log_info1 "Custom nginx.conf.sigil deployed."	
-    else 
-        dokku_log_info1 "nginx.conf.sigil already present in app. Skipping custom template."	
+        dokku_log_info1 "Custom nginx.conf.sigil deployed."
+    else
+        dokku_log_info1 "nginx.conf.sigil already present in app."
     fi
 fi
