@@ -1,6 +1,6 @@
-# dokku-nginx-vhost-conf
+# dokku-nginx-vhosts-conf
 
-> Dokku plugin for managing Nginx configuration.
+> dokku plugin for managing nginx configuration.
 
 ## About
 
@@ -13,31 +13,24 @@
 
 ## Usage
 
-You can always run `dokku nginx-conf:help` to get a summary of options and commands in your shell.
+<details>
+    <summary><code>nginx-conf:help</code></summary>
+    <p>Display usage details.</p>
+</details>
 
 <details>
-    <summary><code>nginx-conf</code>, <code>nginx-conf:report</code></summary>
+    <summary><code>nginx-conf:install repository</code></summary>
+    <p>Save nginx config files and clone given repository in its place.</p>
+</details>
+
+<details>
+    <summary><code>nginx-conf:report</code></summary>
     <p>Report about current nginx configuration.</p>
 </details>
 
 <details>
-    <summary><code>nginx-conf:install  _package_</code></summary>
-    <p>Back the current Nginx configuration up and replace with the contents from the package. Accepts either a path or URL to a ZIP file.</p>
-</details>
-
-<details>
     <summary><code>nginx-conf:restore</code></summary>
-    <p>Discard current configuration and restore last backup.</p>
-</details>
-
-<details>
-    <summary><code>nginx-conf:install-template  _template_</code></summary>
-    <p>Set a custom application configuration template. Accepts either a path or URL to the template file.</p>
-</details>
-
-<details>
-    <summary><code>nginx-conf:restore-template</code></summary>
-    <p>Clear custom application configuration.</p>
+    <p>Restore original nginx config files.</p>
 </details>
 
 ## Legal
